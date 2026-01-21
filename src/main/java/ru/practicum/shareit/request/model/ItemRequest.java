@@ -1,12 +1,12 @@
 package ru.practicum.shareit.request.model;
 
-import java.time.LocalDateTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
+
+import java.time.LocalDateTime;
 
 /**
  * TODO Sprint add-item-requests.

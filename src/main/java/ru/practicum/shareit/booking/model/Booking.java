@@ -1,7 +1,5 @@
 package ru.practicum.shareit.booking.model;
 
-import java.time.LocalDateTime;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
+
+import java.time.LocalDateTime;
 
 /**
  * TODO Sprint add-bookings.
@@ -32,6 +32,6 @@ public class Booking {
         WAITING,    //новое бронирование, ожидает одобрения
         APPROVED,   //бронирование подтверждено владельцем
         REJECTED,   //бронирование отклонено владельцем
-        CANCELED;   //бронирование отменено создателем
+        CANCELED   //бронирование отменено создателем
     }
 }
