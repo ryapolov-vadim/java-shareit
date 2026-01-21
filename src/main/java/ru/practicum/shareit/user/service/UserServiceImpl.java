@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
         User userCreate = userStorage.create(userResult);
         log.info("Обработан метод create в UserServiceImpl");
         return UserMapper.mapToUserDto(userCreate);
+
     }
 
     @Override
