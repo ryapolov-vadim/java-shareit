@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService {
         User userCreate = userStorage.create(userResult);
         log.info("Обработан метод create в UserServiceImpl");
         return UserMapper.mapToUserDto(userCreate);
-
     }
 
     @Override
@@ -68,7 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(UpdateUserRequestDto updateUserRequestDto, Long userId) {
         log.info("Вызван метод update в UserServiceImpl");
-        Optional<User> user = userStorage.getAll().stream().filter(Objects::nonNull).filter(user1 -> user1.getId() != userId && user1.getEmail().equals(updateUserRequestDto.getEmail())).findFirst();
+        Optional<User> user = userStorage.getAll().stream().filter(Objects::nonNull).filter(user1 -> !user1.getId().equals(userId) && user1.getEmail().equals(updateUserRequestDto.getEmail())).findFirst();
         if (user.isPresent()) {
             throw new ConflictException("Email: " + updateUserRequestDto.getEmail() + ", уже занят другим пользователем");
         }
