@@ -19,7 +19,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public List<Item> getAll() {
         log.info("Вызван метод getAll в InMemoryItemStorage");
         List<Item> itemList = items.values().stream().toList();
-        log.info("Вызван метод getAll в InMemoryItemStorage");
+        log.info("Обработан метод getAll в InMemoryItemStorage");
         return itemList;
     }
 
@@ -27,7 +27,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public Item getById(Long itemId) {
         log.info("Вызван метод getById в InMemoryItemStorage");
         Item item = items.get(itemId);
-        log.info("Вызван метод getById в InMemoryItemStorage");
+        log.info("Обработан метод getById в InMemoryItemStorage");
         return item;
     }
 
@@ -36,7 +36,7 @@ public class InMemoryItemStorage implements ItemStorage {
         log.info("Вызван метод create в InMemoryItemStorage");
         item.setId(counter());
         items.put(item.getId(), item);
-        log.info("Вызван метод create в InMemoryItemStorage");
+        log.info("Обработан метод create в InMemoryItemStorage");
         return item;
     }
 
@@ -44,7 +44,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public Item update(Item item) {
         log.info("Вызван метод update в InMemoryItemStorage");
         items.put(item.getId(), item);
-        log.info("Вызван метод update в InMemoryItemStorage");
+        log.info("Обработан метод update в InMemoryItemStorage");
         return item;
     }
 
@@ -52,7 +52,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public void delete(Long itemId) {
         log.info("Вызван метод delete в InMemoryItemStorage");
         items.remove(itemId);
-        log.info("Вызван метод delete в InMemoryItemStorage");
+        log.info("Обработан метод delete в InMemoryItemStorage");
     }
 
     private Long counter() {

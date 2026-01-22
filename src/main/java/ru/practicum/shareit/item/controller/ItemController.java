@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
+
+import ru.practicum.shareit.common.HttpHeadersConstants;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.NewItemRequestDto;
 import ru.practicum.shareit.item.dto.UpdateItemRequestDto;
@@ -34,19 +36,19 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto createItem(@Valid @RequestBody NewItemRequestDto newItemRequestDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto createItem(@Valid @RequestBody NewItemRequestDto newItemRequestDto, @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId) {
         log.info("Вызван метод createItem в ItemController");
         return itemService.createItem(newItemRequestDto, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@Valid @RequestBody UpdateItemRequestDto updateItemRequestDto, @RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable("itemId") Long itemId) {
+    public ItemDto updateItem(@Valid @RequestBody UpdateItemRequestDto updateItemRequestDto, @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId, @PathVariable("itemId") Long itemId) {
         log.info("Вызван метод updateItem в ItemController");
         return itemService.updateItem(updateItemRequestDto, userId, itemId);
     }
 
     @GetMapping
-    public List<ItemDto> getUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getUserItems(@RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId) {
         log.info("Вызван метод getUserItems в ItemController");
         return itemService.getUserItems(userId);
     }
