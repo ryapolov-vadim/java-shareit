@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 @Builder
 @Table(name = "requests")
 public class ItemRequest {
