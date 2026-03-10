@@ -1,37 +1,43 @@
 package ru.practicum.shareit.booking.model;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
-
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode(of = {"id"})
 @Builder
+@Entity
+@Table(name = "bookings")
 public class Booking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull(message = "Дата и время начала бронирования не может быть пустым")
-    private LocalDateTime start;    //дата и время начала бронирования
-    @NotNull(message = "Дата и время конца бронирования не может быть пустым")
-    private LocalDateTime end;      //дата и время конца бронирования
-    private Item item;              //вещь, которую пользователь бронирует
-    private User booker;            //пользователь, который осуществляет бронирование
-    private Status status;          //статус бронирования
 
-    private enum Status {
-        WAITING,    //новое бронирование, ожидает одобрения
-        APPROVED,   //бронирование подтверждено владельцем
-        REJECTED,   //бронирование отклонено владельцем
-        CANCELED   //бронирование отменено создателем
-    }
+    @Column(name = "start_date")
+    private LocalDateTime start;    //дата и время начала бронирования
+
+    @Column(name = "end_date")
+    private LocalDateTime end;      //дата и время конца бронирования
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
+    @ToString.Exclude
+    private Item item;              //вещь, которую пользователь бронирует
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "booker_id")
+    @ToString.Exclude
+    private User booker;            //пользователь, который осуществляет бронирование
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private BookingStatus status;   //статус бронирования
 }

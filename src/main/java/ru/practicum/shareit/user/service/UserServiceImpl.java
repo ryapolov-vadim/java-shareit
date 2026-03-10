@@ -4,14 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.NewUserRequestDto;
 import ru.practicum.shareit.user.dto.UpdateUserRequestDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserStorage;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,38 +22,38 @@ import java.util.Optional;
 @Service
 @Slf4j
 @Qualifier("UserServiceImpl")
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(@Qualifier("InMemoryUserStorage") UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
+    @Transactional
     public UserDto create(NewUserRequestDto newUserRequestDto) {
         log.info("Вызван метод create в UserServiceImpl");
-        Optional<User> user = userStorage.getAll().stream().filter(Objects::nonNull).filter(user1 -> user1.getEmail().equals(newUserRequestDto.getEmail())).findFirst();
-        if (user.isPresent()) {
-            throw new ConflictException("Email: " + newUserRequestDto.getEmail() + ", уже занят другим пользователем");
-        }
+        validateEmail(newUserRequestDto.getEmail());
         User userResult = UserMapper.mapToUser(newUserRequestDto);
-        User userCreate = userStorage.create(userResult);
+        User userCreate = userRepository.save(userResult);
         log.info("Обработан метод create в UserServiceImpl");
         return UserMapper.mapToUserDto(userCreate);
     }
 
     @Override
+    @Transactional
     public void delete(Long userId) {
         log.info("Вызван метод delete в UserServiceImpl");
-        userStorage.delete(userId);
+        userRepository.deleteById(userId);
         log.info("Обработан метод delete в UserServiceImpl");
     }
 
     @Override
     public List<UserDto> getAll() {
         log.info("Вызван метод getAll в UserServiceImpl");
-        List<UserDto> userDtoList = userStorage.getAll().stream().filter(Objects::nonNull).map(UserMapper::mapToUserDto).toList();
+        List<UserDto> userDtoList = userRepository.findAll().stream().filter(Objects::nonNull).map(UserMapper::mapToUserDto).toList();
         log.info("Обработан метод getAll в UserServiceImpl");
         return userDtoList;
     }
@@ -59,24 +61,36 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getById(Long userId) {
         log.info("Вызван метод getById в UserServiceImpl");
-        User user = userStorage.getById(userId);
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent()) {
+            String error = String.format("Пользователь с ID: %d ненайден", userId);
+            log.warn(error);
+            throw new NotFoundException(error);
+        }
         log.info("Обработан метод getById в UserServiceImpl");
-        return UserMapper.mapToUserDto(user);
+        return UserMapper.mapToUserDto(user.get());
     }
 
     @Override
+    @Transactional
     public UserDto update(UpdateUserRequestDto updateUserRequestDto, Long userId) {
         log.info("Вызван метод update в UserServiceImpl");
-        Optional<User> user = userStorage.getAll().stream().filter(Objects::nonNull).filter(user1 -> !user1.getId().equals(userId) && user1.getEmail().equals(updateUserRequestDto.getEmail())).findFirst();
-        if (user.isPresent()) {
-            throw new ConflictException("Email: " + updateUserRequestDto.getEmail() + ", уже занят другим пользователем");
-        }
-        User userResult = userStorage.getById(userId);
-        if (userResult == null) {
-            throw new ValidationException("Пользователь с ID: " + updateUserRequestDto.getId() + " ненайден");
-        }
+        validateEmail(updateUserRequestDto.getEmail());
+        User userResult = userRepository.findById(userId).orElseThrow(() -> new ValidationException("Пользователь с ID: " + updateUserRequestDto.getId() + " ненайден"));
+
         User userUpdate = UserMapper.updateUserField(userResult, updateUserRequestDto);
+        User userUpdateResult = userRepository.save(userUpdate);
+
         log.info("Обработан метод update в UserServiceImpl");
-        return UserMapper.mapToUserDto(userUpdate);
+        return UserMapper.mapToUserDto(userUpdateResult);
+    }
+
+    private void validateEmail(String email) {
+        Optional<User> user = userRepository.findByEmailIgnoreCase(email);
+        if (user.isPresent()) {
+            String error = String.format("Email: %s, уже занят другим пользователем", email);
+            log.warn(error);
+            throw new ConflictException(error);
+        }
     }
 }
