@@ -3,23 +3,22 @@ package ru.practicum.shareit.item.mapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemOwnerDto;
 import ru.practicum.shareit.item.dto.NewItemRequestDto;
 import ru.practicum.shareit.item.dto.UpdateItemRequestDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.user.model.User;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
 
     public static ItemDto mapToItemDto(Item item) {
         ItemDto itemDto = ItemDto.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).build();
-
+        // вставить request
         return itemDto;
     }
 
     public static Item mapToItem(NewItemRequestDto newItemRequest) {
-        Item item = Item.builder().name(newItemRequest.getName()).description(newItemRequest.getDescription()).available(newItemRequest.getAvailable()).owner(new User()).request(new ItemRequest()).build();
+        Item item = Item.builder().name(newItemRequest.getName()).description(newItemRequest.getDescription()).available(newItemRequest.getAvailable()).build();
 
         return item;
     }
@@ -37,5 +36,11 @@ public class ItemMapper {
             item.setAvailable(itemRequestDto.getAvailable());
         }
         return item;
+    }
+
+    public static ItemOwnerDto mapToItemOwnerDto(Item item) {
+        ItemOwnerDto itemOwnerDto = ItemOwnerDto.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).build();
+        // вставить request
+        return itemOwnerDto;
     }
 }

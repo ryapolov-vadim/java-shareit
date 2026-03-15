@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.user.model.User;
 
 @Data
 @AllArgsConstructor
@@ -20,8 +18,7 @@ public class UpdateItemRequestDto {
     @Size(max = 200, message = "максимальная длина описания — 200 символов")
     private String description;
     private Boolean available;
-    private User owner;
-    private ItemRequest request;
+    private Long request;
 
     public boolean hasName() {
         return !(name == null || name.isBlank());

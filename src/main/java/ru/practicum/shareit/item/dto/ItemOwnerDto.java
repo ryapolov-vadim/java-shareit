@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.dto;
 import lombok.*;
 import ru.practicum.shareit.item.comment.dto.CommentDto;
 import ru.practicum.shareit.request.model.ItemRequest;
-import ru.practicum.shareit.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,14 +12,13 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Builder
-public class ItemDto {
+public class ItemOwnerDto {
     private Long id;
     private String name;
     private String description;
-    private LocalDateTime lastBooking;
-    private LocalDateTime nextBooking;
+    private LocalDateTime lastBooking; // дата последнего бронирования
+    private LocalDateTime nextBooking; // дата ближайшего бронирования
     private Boolean available;
-    private UserDto owner;
     private ItemRequest request;
     private List<CommentDto> comments;
 }
