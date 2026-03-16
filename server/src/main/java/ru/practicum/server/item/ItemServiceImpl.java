@@ -216,7 +216,7 @@ public class ItemServiceImpl implements ItemService {
         log.info("APPROVED бронирований пользователя {} для вещи {}: {}", userId, itemId, approvedBookings.size());
 
         if (approvedBookings.isEmpty()) {
-            log.error("❌ У пользователя {} нет APPROVED бронирований для вещи {}", userId, itemId);
+            log.error("У пользователя {} нет APPROVED бронирований для вещи {}", userId, itemId);
             throw new ValidationException("Вы можете комментировать только после подтверждённого бронирования");
         }
 
@@ -231,7 +231,7 @@ public class ItemServiceImpl implements ItemService {
 
             if (isPast) {
                 hasPastBooking = true;
-                log.info("✅ Найдено PAST (завершённое) бронирование с ID={}", booking.getId());
+                log.info("Найдено PAST (завершённое) бронирование с ID={}", booking.getId());
             } else {
                 hasActiveBooking = true;
                 log.info("⏳ Найдено ACTIVE (активное) бронирование с ID={}", booking.getId());
@@ -239,7 +239,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         if (hasPastBooking) {
-            log.info("✅ Есть завершённое бронирование - создаём комментарий");
+            log.info("Есть завершённое бронирование - создаём комментарий");
 
             Comment comment = Comment.builder()
                     .text(requestCommentDto.getText())
@@ -249,17 +249,17 @@ public class ItemServiceImpl implements ItemService {
                     .build();
 
             Comment savedComment = commentRepository.save(comment);
-            log.info("✅ Комментарий сохранён с ID: {}", savedComment.getId());
+            log.info("Комментарий сохранён с ID: {}", savedComment.getId());
 
             CommentDto savedCommentDto = commentMapper.toDto(savedComment);
             savedCommentDto.setAuthorName(author.getName());
 
-            log.info("✅ Добавлен комментарий: {}", savedCommentDto);
+            log.info("Добавлен комментарий: {}", savedCommentDto);
             return savedCommentDto;
         }
 
         if (hasActiveBooking && !hasPastBooking) {
-            log.error("❌ У пользователя {} есть только активные APPROVED бронирования для вещи {}", userId, itemId);
+            log.error("У пользователя {} есть только активные APPROVED бронирования для вещи {}", userId, itemId);
             throw new ValidationException("Нельзя оставить комментарий до завершения аренды");
         }
 
